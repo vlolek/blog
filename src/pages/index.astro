@@ -1,8 +1,7 @@
 ---
-import { SITE, SOCIAL_LINKS, POSTS_CONFIG, PROJECTS_CONFIG, EDUCATION_CONFIG } from '~/config'
+import { SITE, POSTS_CONFIG, PROJECTS_CONFIG } from '~/config'
 import Layout from '~/layouts/Layout.astro'
 import SectionDivider from '~/components/base/SectionDivider.astro'
-import SocialLink from '~/components/base/SocialLink.astro'
 import List from '~/components/posts/card/List.astro'
 import { getNumPosts, getPinnedPosts, getNumProjects, getNumEducation } from '~/lib/data'
 import type { CollectionEntry } from 'astro:content'
