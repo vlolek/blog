@@ -1,6 +1,6 @@
 import { glob } from 'astro/loaders'
 import { defineCollection, z } from 'astro:content'
-import { POSTS_CONFIG } from '~/config'
+import { EDUCATION_CONFIG, POSTS_CONFIG } from '~/config'
 import type { CoverLayout, PostType } from '~/types'
 
 const posts = defineCollection({
@@ -38,18 +38,58 @@ const projects = defineCollection({
     base: './src/content/projects',
   }),
   schema: ({ image }) =>
-    z.object({
-      name: z.string(),
-      description: z.string(),
-      githubUrl: z.string(),
-      website: z.string(),
-      type: z.string(),
-      icon: image().optional(),
-      imageClass: z.string().optional(),
-      star: z.number(),
-      fork: z.number(),
-      draft: z.boolean().default(false),
-    }),
+    z
+      .object({
+        title: z.string(),
+        description: z.string(),
+        pubDate: z.date(),
+        tags: z.array(z.string()).optional(),
+        updatedDate: z.date().optional(),
+        author: z.string().default('vlolek'),
+        cover: image().optional(),
+        ogImage: image().optional(),
+        recommend: z.boolean().default(false),
+        postType: z.custom<PostType>().optional(),
+        coverLayout: z.custom<CoverLayout>().optional(),
+        pinned: z.boolean().default(false),
+        draft: z.boolean().default(false),
+        license: z.string().optional(),
+        githubUrl: z.string().optional(),
+        website: z.string().optional(),
+      })
+      .transform((data) => ({
+        ...data,
+        ogImage: data.cover ? data.cover : data.ogImage,
+      })),
 })
 
-export const collections = { posts, projects }
+const education = defineCollection({
+  loader: glob({
+    pattern: '**/*.{md,mdx}',
+    base: './src/content/education',
+  }),
+  schema: ({ image }) =>
+    z
+      .object({
+        title: z.string(),
+        description: z.string(),
+        pubDate: z.date(),
+        tags: z.array(z.string()).optional(),
+        updatedDate: z.date().optional(),
+        author: z.string().default('vlolek'),
+        cover: image().optional(),
+        ogImage: image().optional(),
+        recommend: z.boolean().default(false),
+        postType: z.custom<PostType>().optional(),
+        coverLayout: z.custom<CoverLayout>().optional(),
+        pinned: z.boolean().default(false),
+        draft: z.boolean().default(false),
+        license: z.string().optional(),
+      })
+      .transform((data) => ({
+        ...data,
+        ogImage: EDUCATION_CONFIG.ogImageUseCover && data.cover ? data.cover : data.ogImage,
+      })),
+})
+
+export const collections = { posts, projects, education }

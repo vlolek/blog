@@ -1,0 +1,171 @@
+---
+title: 'Come Creare Articoli'
+description: 'Guida completa per creare e formattare nuovi articoli MDX nel blog'
+pubDate: 2025-01-15
+author: 'vlolek'
+tags: ['guida', 'documentazione']
+draft: false
+---
+
+# Come Creare Articoli
+
+Questa guida ti spiegherà come creare nuovi articoli per il blog utilizzando file MDX.
+
+## Struttura dei File
+
+Ogni articolo deve essere creato in una cartella dedicata all'interno di `src/content/posts/`. La struttura consigliata è:
+
+```
+src/content/posts/
+  └── nome-articolo/
+      ├── index.mdx
+      └── assets/ (opzionale)
+          └── cover.png
+```
+
+## Frontmatter
+
+Ogni file MDX deve iniziare con un blocco frontmatter YAML che contiene i metadati dell'articolo:
+
+```yaml
+---
+title: 'Titolo dell\'articolo'
+description: 'Breve descrizione dell\'articolo'
+pubDate: 2025-01-15
+author: 'vlolek'
+tags: ['tag1', 'tag2']
+updatedDate: 2025-01-20 (opzionale)
+cover: assets/cover.png (opzionale)
+ogImage: assets/og-image.png (opzionale)
+recommend: false (opzionale, default: false)
+postType: 'metaOnly' | 'coverTop' | 'coverSplit' (opzionale)
+coverLayout: 'left' | 'right' (opzionale)
+pinned: false (opzionale, default: false)
+draft: false (opzionale, default: false)
+license: 'CC BY-SA 4.0' (opzionale)
+---
+```
+
+### Campi Obbligatori
+
+- **title**: Titolo dell'articolo
+- **description**: Descrizione breve dell'articolo (usata per SEO e anteprime)
+- **pubDate**: Data di pubblicazione nel formato `YYYY-MM-DD`
+- **author**: Nome dell'autore (default: valore da config)
+
+### Campi Opzionali
+
+- **tags**: Array di tag per categorizzare l'articolo
+- **updatedDate**: Data di ultimo aggiornamento
+- **cover**: Immagine di copertina (percorso relativo alla cartella dell'articolo)
+- **ogImage**: Immagine personalizzata per Open Graph (se non specificata, usa la cover)
+- **recommend**: Se `true`, mostra un badge "CONSIGLIATO"
+- **postType**: Tipo di layout dell'articolo:
+  - `metaOnly`: Solo metadati, senza immagine di copertina
+  - `coverTop`: Immagine di copertina in alto
+  - `coverSplit`: Immagine di copertina divisa con il contenuto
+- **coverLayout**: Posizione dell'immagine di copertina (`left` o `right`) per il layout `coverSplit`
+- **pinned**: Se `true`, l'articolo appare in evidenza nella homepage
+- **draft**: Se `true`, l'articolo non viene pubblicato
+- **license**: Licenza del contenuto
+
+## Contenuto
+
+Dopo il frontmatter, puoi scrivere il contenuto dell'articolo utilizzando Markdown standard e componenti MDX.
+
+### Esempio Completo
+
+```mdx
+---
+title: 'Il Mio Primo Articolo'
+description: 'Questo è un esempio di articolo per il blog'
+pubDate: 2025-01-15
+author: 'vlolek'
+tags: ['tutorial', 'astro']
+cover: assets/cover.png
+recommend: true
+draft: false
+---
+
+# Il Mio Primo Articolo
+
+Questo è il contenuto del mio articolo scritto in **Markdown**.
+
+## Sezione 1
+
+Puoi usare tutti i formati Markdown standard:
+
+- Liste
+- **Grassetto**
+- *Corsivo*
+- [Link](https://example.com)
+
+### Codice
+
+Puoi anche includere blocchi di codice:
+
+\`\`\`javascript
+function esempio() {
+  console.log('Ciao mondo!');
+}
+\`\`\`
+
+## Immagini
+
+Per includere immagini nella cartella assets:
+
+![Descrizione immagine](assets/mia-immagine.png)
+```
+
+## Layout degli Articoli
+
+### MetaOnly
+
+Layout semplice senza immagine di copertina, ideale per articoli testuali:
+
+```yaml
+postType: 'metaOnly'
+```
+
+### CoverTop
+
+Immagine di copertina posizionata in alto:
+
+```yaml
+postType: 'coverTop'
+cover: assets/cover.png
+```
+
+### CoverSplit
+
+Immagine di copertina divisa con il contenuto:
+
+```yaml
+postType: 'coverSplit'
+cover: assets/cover.png
+coverLayout: 'right'  # o 'left'
+```
+
+## Best Practices
+
+1. **Nomi delle cartelle**: Usa nomi descrittivi in minuscolo con trattini (es: `mio-articolo`)
+2. **Immagini**: Salva le immagini nella cartella `assets/` dentro la cartella dell'articolo
+3. **Tag**: Usa tag consistenti per facilitare la navigazione
+4. **Descrizioni**: Scrivi descrizioni chiare e concise (circa 150-160 caratteri)
+5. **Date**: Usa sempre il formato `YYYY-MM-DD` per le date
+
+## Creare un Nuovo Articolo
+
+1. Crea una nuova cartella in `src/content/posts/nome-articolo/`
+2. Crea il file `index.mdx` nella cartella
+3. Aggiungi il frontmatter con tutti i metadati necessari
+4. Scrivi il contenuto in Markdown/MDX
+5. Se necessario, aggiungi immagini nella cartella `assets/`
+6. Imposta `draft: false` quando sei pronto a pubblicare
+
+## Note
+
+- Gli articoli con `draft: true` non vengono visualizzati nel sito
+- Gli articoli con `pinned: true` appaiono in evidenza nella homepage
+- La data `pubDate` determina l'ordine di visualizzazione (più recenti prima)
+

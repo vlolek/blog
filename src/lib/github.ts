@@ -31,15 +31,6 @@ async function fetchWithCache<T>(key: string, fetcher: () => Promise<T>, fallbac
   }
 }
 
-export async function getGithubFollowers(username: string): Promise<number | undefined> {
-  return fetchWithCache(`followers_${username}`, async () => {
-    const res = await fetch(`https://api.github.com/users/${username}`)
-    if (!res.ok) throw new Error(res.statusText)
-    const data = await res.json()
-    return data.followers
-  })
-}
-
 export async function getGithubRepoStats(owner: string, repo: string): Promise<{ stars: number; forks: number } | undefined> {
   return fetchWithCache(`repo_${owner}_${repo}`, async () => {
     const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`)

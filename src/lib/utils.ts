@@ -18,6 +18,12 @@ export function postsSort(posts: CollectionEntry<'posts'>[]) {
 // 日期格式化类型
 export type DateFormat = 'default' | 'dot' | 'short' | 'iso' | 'chinese'
 
+// Nomi dei mesi in italiano abbreviati
+const italianMonths = [
+  'Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu',
+  'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'
+]
+
 // 日期格式化函数
 export const formatDate = (date: Date, format: DateFormat = 'default'): string => {
   switch (format) {
@@ -29,12 +35,11 @@ export const formatDate = (date: Date, format: DateFormat = 'default'): string =
       return `${year}.${month}.${day}`
 
     case 'short':
-      // Mar 3, 2020 格式
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
+      // 00 Gen, 2000 格式 (italiano)
+      const shortYear = date.getFullYear()
+      const shortMonth = italianMonths[date.getMonth()]
+      const shortDay = String(date.getDate()).padStart(2, '0')
+      return `${shortDay} ${shortMonth}, ${shortYear}`
 
     case 'iso':
       // 2020-03-03 格式
@@ -49,11 +54,10 @@ export const formatDate = (date: Date, format: DateFormat = 'default'): string =
 
     case 'default':
     default:
-      // March 3, 2020 格式（默认）
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+      // 00 Gen, 2000 格式（默认，italiano）
+      const defaultYear = date.getFullYear()
+      const defaultMonth = italianMonths[date.getMonth()]
+      const defaultDay = String(date.getDate()).padStart(2, '0')
+      return `${defaultDay} ${defaultMonth}, ${defaultYear}`
   }
 }

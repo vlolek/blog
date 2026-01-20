@@ -1,0 +1,174 @@
+---
+title: 'Come Creare Appunti di Formazione'
+description: 'Guida completa per creare e formattare nuovi appunti MDX per la sezione Formazione'
+pubDate: 2025-01-15
+author: 'vlolek'
+tags: ['guida', 'documentazione']
+draft: false
+---
+
+# Come Creare Appunti di Formazione
+
+Questa guida ti spiegherà come creare nuovi appunti per la sezione Formazione utilizzando file MDX.
+
+## Struttura dei File
+
+Ogni appunto deve essere creato in una cartella dedicata all'interno di `src/content/education/`. La struttura consigliata è:
+
+```
+src/content/education/
+  └── nome-appunto/
+      ├── index.mdx
+      └── assets/ (opzionale)
+          └── cover.png
+```
+
+## Frontmatter
+
+Ogni file MDX deve iniziare con un blocco frontmatter YAML che contiene i metadati dell'appunto:
+
+```yaml
+---
+title: 'Titolo dell\'appunto'
+description: 'Breve descrizione dell\'appunto'
+pubDate: 2025-01-15
+author: 'vlolek'
+tags: ['tag1', 'tag2']
+updatedDate: 2025-01-20 (opzionale)
+cover: assets/cover.png (opzionale)
+ogImage: assets/og-image.png (opzionale)
+recommend: false (opzionale, default: false)
+postType: 'metaOnly' | 'coverTop' | 'coverSplit' (opzionale)
+coverLayout: 'left' | 'right' (opzionale)
+pinned: false (opzionale, default: false)
+draft: false (opzionale, default: false)
+license: 'CC BY-SA 4.0' (opzionale)
+---
+```
+
+### Campi Obbligatori
+
+- **title**: Titolo dell'appunto
+- **description**: Descrizione breve dell'appunto (usata per SEO e anteprime)
+- **pubDate**: Data di pubblicazione nel formato `YYYY-MM-DD`
+- **author**: Nome dell'autore (default: 'vlolek')
+
+### Campi Opzionali
+
+- **tags**: Array di tag per categorizzare l'appunto (es: ['corso', 'javascript', 'frontend'])
+- **updatedDate**: Data di ultimo aggiornamento
+- **cover**: Immagine di copertina (percorso relativo alla cartella dell'appunto)
+- **ogImage**: Immagine personalizzata per Open Graph (se non specificata, usa la cover)
+- **recommend**: Se `true`, mostra un badge "CONSIGLIATO"
+- **postType**: Tipo di layout dell'appunto:
+  - `metaOnly`: Solo metadati, senza immagine di copertina
+  - `coverTop`: Immagine di copertina in alto
+  - `coverSplit`: Immagine di copertina divisa con il contenuto
+- **coverLayout**: Posizione dell'immagine di copertina (`left` o `right`) per il layout `coverSplit`
+- **pinned**: Se `true`, l'appunto appare in evidenza nella homepage
+- **draft**: Se `true`, l'appunto non viene pubblicato
+- **license**: Licenza del contenuto
+
+## Contenuto
+
+Dopo il frontmatter, puoi scrivere il contenuto dell'appunto utilizzando Markdown standard e componenti MDX.
+
+### Esempio Completo
+
+```mdx
+---
+title: 'Appunti di JavaScript Avanzato'
+description: 'Appunti del corso di JavaScript avanzato - Closures, Prototypes e Async'
+pubDate: 2025-01-15
+author: 'vlolek'
+tags: ['javascript', 'corso', 'programmazione']
+cover: assets/cover.png
+recommend: true
+draft: false
+---
+
+# Appunti di JavaScript Avanzato
+
+Questi sono gli appunti del corso di JavaScript avanzato.
+
+## Closures
+
+Una closure è una funzione che ha accesso alle variabili del suo scope esterno...
+
+\`\`\`javascript
+function outerFunction() {
+  const outerVariable = 'Ciao';
+
+  function innerFunction() {
+    console.log(outerVariable);
+  }
+
+  return innerFunction;
+}
+\`\`\`
+
+## Prototypes
+
+Il sistema di prototipi in JavaScript...
+
+## Async/Await
+
+Gestione asincrona del codice...
+```
+
+## Layout degli Appunti
+
+Gli appunti supportano gli stessi layout degli articoli:
+
+### MetaOnly
+
+Layout semplice senza immagine di copertina, ideale per appunti testuali:
+
+```yaml
+postType: 'metaOnly'
+```
+
+### CoverTop
+
+Immagine di copertina posizionata in alto:
+
+```yaml
+postType: 'coverTop'
+cover: assets/cover.png
+```
+
+### CoverSplit
+
+Immagine di copertina divisa con il contenuto:
+
+```yaml
+postType: 'coverSplit'
+cover: assets/cover.png
+coverLayout: 'right'  # o 'left'
+```
+
+## Best Practices
+
+1. **Nomi delle cartelle**: Usa nomi descrittivi in minuscolo con trattini (es: `javascript-avanzato`)
+2. **Immagini**: Salva le immagini nella cartella `assets/` dentro la cartella dell'appunto
+3. **Tag**: Usa tag consistenti per facilitare la navigazione (es: nome del corso, argomento)
+4. **Descrizioni**: Scrivi descrizioni chiare che indichino l'argomento trattato
+5. **Date**: Usa sempre il formato `YYYY-MM-DD` per le date
+6. **Organizzazione**: Organizza gli appunti per corso o argomento usando i tag
+
+## Creare un Nuovo Appunto
+
+1. Crea una nuova cartella in `src/content/education/nome-appunto/`
+2. Crea il file `index.mdx` nella cartella
+3. Aggiungi il frontmatter con tutti i metadati necessari
+4. Scrivi il contenuto in Markdown/MDX
+5. Se necessario, aggiungi immagini nella cartella `assets/`
+6. Imposta `draft: false` quando sei pronto a pubblicare
+
+## Note
+
+- Gli appunti con `draft: true` non vengono visualizzati nel sito
+- Gli appunti con `pinned: true` appaiono in evidenza nella homepage
+- La data `pubDate` determina l'ordine di visualizzazione (più recenti prima)
+- Usa i tag per organizzare gli appunti per corso o argomento
+

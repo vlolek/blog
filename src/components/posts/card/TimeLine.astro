@@ -6,7 +6,7 @@ import { POSTS_CONFIG } from '~/config'
 
 interface Props extends CardProps {}
 
-const { post, class: className, style }: Props = Astro.props
+const { post, baseUrl = '/posts', class: className, style }: Props = Astro.props
 const recommendText = POSTS_CONFIG.recommendText
 ---
 
@@ -54,7 +54,7 @@ const recommendText = POSTS_CONFIG.recommendText
         </div>
       </div>
 
-      <a href={`/posts/${post.id}`} class="block group/title">
+      <a href={`${baseUrl}/${post.id}`} class="block group/title">
         <div class="text-base font-semibold text-foreground/90 group-hover:text-primary transition-colors">
           {post.data.title}
         </div>

@@ -10,9 +10,6 @@ interface Props extends Omit<astroHTML.JSX.AnchorHTMLAttributes, 'class' | 'chil
 }
 
 const { label, icon, count, class: className, ...props }: Props = Astro.props
-const href = props.href as string
-const isGithub = href?.includes('github.com')
-const githubUser = isGithub ? href.split('/').filter(Boolean).pop() : undefined
 ---
 
 <a
@@ -27,7 +24,7 @@ const githubUser = isGithub ? href.split('/').filter(Boolean).pop() : undefined
   {
     count !== undefined && (
       <span class="text-muted-foreground text-sm group-hover:text-primary">
-        <NumberTicker play value={count} label={label} client:load githubUser={githubUser} />
+        <NumberTicker play value={count} label={label} client:load />
       </span>
     )
   }

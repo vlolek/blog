@@ -1,28 +1,3 @@
-@font-face {
-  font-family: 'Numbers';
-  src: url('/fonts/GeistVF.woff2') format('woff2');
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'CJKEmDash';
-  unicode-range: U+2014, U+2E3A-2E3B;
-  src: url('/fonts/ZhudouSansVF-subset.woff2') format('woff2');
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lexend';
-  src: url('/fonts/Lexend-VariableFont_wght.woff2') format('woff2');
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GeistMono';
-  src: url('/fonts/GeistMono.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
 
 * {
   box-sizing: border-box;
@@ -33,9 +8,7 @@
 }
 
 :root {
-  --font-lexend: 'Lexend', 'CJKEmDash', 'Numbers', 'ShangguSansSC-VF', sans-serif;
-  --font-sans: 'CJKEmDash', 'Numbers', 'ShangguSansSC-VF', sans-serif;
-  --font-geist-mono: 'GeistMono', 'Input Mono', 'Fira Code', 'ShangguSansSC-VF', monospace;
+  --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --background: 255 100% 100%;
   --foreground: 225 15% 12%;
   --scrollbar: 220 20% 80%;
@@ -88,7 +61,7 @@ body {
 h1,
 h2,
 h3 {
-  font-family: var(--font-lexend);
+  font-family: var(--font-sans);
 }
 
 h1 {
@@ -207,7 +180,7 @@ header {
 }
 
 .post time {
-  font-family: var(--font-geist-mono);
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
   color: hsl(var(--muted-foreground));
   font-size: 12px;
   white-space: nowrap;

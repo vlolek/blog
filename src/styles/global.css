@@ -9,9 +9,9 @@
 /* ===== 主题变量 ===== */
 @theme {
   /* 字体系统 */
-  --font-serif: var(--font-lexend);
+  --font-serif: var(--font-sans);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 
   /* 颜色系统 */
   --color-border: hsl(var(--border));
@@ -32,45 +32,12 @@
   --color-scrollbar-bg: hsl(var(--scrollbar-bg));
 }
 
-/* ===== 字体配置 ===== */
-@layer base {
-  /* 数字字体 */
-  @font-face {
-    font-family: 'Numbers';
-    src: url('/fonts/GeistVF.woff2') format('woff2');
-    font-display: swap;
-  }
-
-  /* 破折号字体 */
-  @font-face {
-    font-family: 'CJKEmDash';
-    unicode-range: U+2014, U+2E3A-2E3B;
-    src: url('/fonts/ZhudouSansVF-subset.woff2') format('woff2');
-    font-display: swap;
-  }
-
-  /* 标题字体 */
-  @font-face {
-    font-family: 'Lexend';
-    src: url('/fonts/Lexend-VariableFont_wght.woff2') format('woff2');
-    font-display: swap;
-  }
-
-  /* 等宽字体 */
-  @font-face {
-    font-family: 'GeistMono';
-    src: url('/fonts/GeistMono.woff2') format('woff2');
-    font-display: swap;
-  }
-}
 
 /* ===== 颜色变量 ===== */
 @layer base {
   :root {
     /* 字体族 */
-    --font-lexend: 'Lexend', 'CJKEmDash', 'Numbers', 'ShangguSansSC-VF', ui-sans-serif, system-ui, sans-serif;
-    --font-sans: 'CJKEmDash', 'Numbers', 'ShangguSansSC-VF', ui-sans-serif, system-ui, sans-serif;
-    --font-geist-mono: 'GeistMono', 'Input Mono', 'Fira Code', 'ShangguSansSC-VF', monospace;
+    --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 
     /* 基础色调 */
     --background: 255 100% 100%;

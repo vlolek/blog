@@ -1,7 +1,7 @@
 import { cn } from '~/lib/utils'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
-import { getGithubFollowers, getGithubRepoStats } from '~/lib/github'
+import { getGithubRepoStats } from '~/lib/github'
 
 interface NumberTickerProps {
   value: number
@@ -10,7 +10,6 @@ interface NumberTickerProps {
   label?: string
   delay?: number // delay in seconds
   play?: boolean
-  githubUser?: string
   githubRepo?: string
   githubType?: 'stars' | 'forks'
 }
@@ -22,7 +21,6 @@ export default function NumberTicker({
   className,
   label,
   play = true,
-  githubUser,
   githubRepo,
   githubType,
 }: NumberTickerProps) {
@@ -38,10 +36,7 @@ export default function NumberTicker({
     let isMounted = true
 
     const fetchData = async () => {
-      if (githubUser) {
-        const followers = await getGithubFollowers(githubUser)
-        if (isMounted && followers !== undefined) setValue(followers)
-      } else if (githubRepo && githubType) {
+      if (githubRepo && githubType) {
         const parts = githubRepo.split('/')
         if (parts.length === 2) {
           const stats = await getGithubRepoStats(parts[0], parts[1])
@@ -57,7 +52,7 @@ export default function NumberTicker({
     return () => {
       isMounted = false
     }
-  }, [githubUser, githubRepo, githubType])
+  }, [githubRepo, githubType])
 
   useEffect(() => {
     if (!play) return
