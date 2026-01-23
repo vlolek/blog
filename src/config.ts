@@ -11,7 +11,7 @@ import type {
 
 //--- Readme Page Config ---
 export const SITE: Site = {
-  title: 'Vladlen Oleksiuk | Backend Developer',
+  title: 'Vladlen Oleksiuk - Backend Developer',
   description:
     'Backend developer che condivide i suoi progetti e le sue esperienze.',
   website: 'https://vlolek.com/',
