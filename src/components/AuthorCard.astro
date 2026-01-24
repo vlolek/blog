@@ -1,0 +1,124 @@
+---
+import Link from '@/components/Link.astro'
+import AvatarComponent from '@/components/ui/avatar'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import type { SocialLink } from '@/types'
+import { Icon } from 'astro-icon/components'
+import type { CollectionEntry } from 'astro:content'
+import SocialIcons from './SocialIcons.astro'
+
+interface Props {
+  author: CollectionEntry<'authors'>
+}
+
+const { author } = Astro.props
+const { name, avatar, bio, pronouns } =
+  author.data
+const currentPath = Astro.url.pathname
+const isAuthorPage =
+  currentPath === `/authors/${author.id}`
+
+const socialLinks: SocialLink[] = [
+  author.data.website && {
+    href: author.data.website,
+    label: 'Website',
+  },
+  author.data.github && {
+    href: author.data.github,
+    label: 'GitHub',
+  },
+  author.data.twitter && {
+    href: author.data.twitter,
+    label: 'Twitter',
+  },
+  author.data.linkedin && {
+    href: author.data.linkedin,
+    label: 'LinkedIn',
+  },
+  author.data.mail && {
+    href: `mailto:${author.data.mail}`,
+    label: 'Email',
+  },
+].filter(Boolean) as SocialLink[]
+---
+
+<div
+  class="overflow-hidden transition-colors duration-300 ease-in-out"
+>
+  <div class="flex gap-4">
+    <AvatarComponent
+      client:load
+      src={avatar}
+      alt={`Avatar of ${name}`}
+      fallback={name[0]}
+      className={cn(
+        'size-32',
+        !isAuthorPage &&
+          'hover:ring-primary transition-shadow duration-300',
+      )}
+    />
+    <div
+      class="flex grow flex-col justify-between gap-y-4"
+    >
+      <div>
+        <div
+          class="flex flex-wrap items-center gap-x-2"
+        >
+          <h3 class="text-lg font-medium">
+            {name}
+          </h3>
+          {
+            pronouns && (
+              <span class="text-muted-foreground text-sm">
+                ({pronouns})
+              </span>
+            )
+          }
+        </div>
+        <p class="text-muted-foreground text-sm">
+          {bio}
+        </p>
+      </div>
+      <div
+        class="flex items-center gap-2 whitespace-nowrap"
+      >
+        <SocialIcons links={socialLinks} />
+        {
+          author.data.cv && (
+            <Link
+              href={author.data.cv}
+              class={buttonVariants({
+                variant: 'outline',
+              })}
+              external
+              download={
+                author.data.cv.split('/').pop() ||
+                'curriculum.pdf'
+              }
+              aria-label={`Scarica il curriculum di ${name}`}
+            >
+              <span class="hidden sm:inline">
+                <Icon
+                  name="lucide:download"
+                  class="size-4"
+                  aria-hidden="true"
+                />
+              </span>
+              <span class="sm:hidden">
+                <Icon
+                  name="lucide:file-text"
+                  class="size-4"
+                  aria-hidden="true"
+                />
+              </span>
+              <span class="hidden sm:inline">
+                Curriculum
+              </span>
+            </Link>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</div>

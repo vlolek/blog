@@ -1,0 +1,81 @@
+---
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+import { Icon } from 'astro-icon/components'
+
+export interface BreadcrumbItem {
+  href?: string
+  label: string
+  icon?: string
+}
+
+interface Props {
+  items: BreadcrumbItem[]
+}
+
+const { items } = Astro.props
+---
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink
+        href="/"
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center"
+        title="Vai alla homepage"
+      >
+        <Icon
+          name="lucide:home"
+          class="size-5 shrink-0"
+          aria-hidden="true"
+        />
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+    {
+      items.map((item, index) => (
+        <>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            {index === items.length - 1 ? (
+              <BreadcrumbPage>
+                <span class="flex items-center gap-x-2">
+                  {item.icon && (
+                    <Icon
+                      name={item.icon}
+                      class="size-4 shrink-0"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span>{item.label}</span>
+                </span>
+              </BreadcrumbPage>
+            ) : (
+              <BreadcrumbLink
+                href={item.href}
+                className="min-h-[44px] flex items-center"
+                title={`Vai a ${item.label}`}
+              >
+                <span class="flex items-center gap-x-2">
+                  {item.icon && (
+                    <Icon
+                      name={item.icon}
+                      class="size-5 shrink-0"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span>{item.label}</span>
+                </span>
+              </BreadcrumbLink>
+            )}
+          </BreadcrumbItem>
+        </>
+      ))
+    }
+  </BreadcrumbList>
+</Breadcrumb>

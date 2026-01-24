@@ -1,0 +1,79 @@
+---
+import { SITE } from '@/consts'
+import type { CollectionEntry } from 'astro:content'
+import { getImage } from 'astro:assets'
+
+type PostCollection = 'blog' | 'education'
+
+interface Props {
+  post: CollectionEntry<'blog'> | CollectionEntry<'education'>
+  collection: PostCollection
+  authors?: Array<{ name: string; url?: string }>
+  breadcrumbs?: Array<{ name: string; url: string }>
+}
+
+const {
+  post,
+  collection,
+  authors = [],
+  breadcrumbs = [],
+} = Astro.props
+
+const postUrl = new URL(`/${collection}/${post.id}`, SITE.href).href
+
+let imageUrl = new URL('/static/1200x630.png', SITE.href).href
+if (post.data.image) {
+  const optimizedImage = await getImage({ src: post.data.image, width: 1200, height: 630 })
+  imageUrl = new URL(optimizedImage.src, SITE.href).href
+}
+
+const articleData = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  image: imageUrl,
+  datePublished: post.data.date.toISOString(),
+  dateModified: post.data.date.toISOString(), // Usa date come modified se non c'è un campo separato
+  author: authors.map((author) => ({
+    '@type': 'Person',
+    name: author.name,
+    ...(author.url && { url: author.url }),
+  })),
+  publisher: {
+    '@type': 'Organization',
+    name: SITE.title,
+    url: SITE.href,
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL('/static/logo.png', SITE.href).href,
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': postUrl,
+  },
+  ...(post.data.tags && post.data.tags.length > 0 && {
+    keywords: post.data.tags.join(', '),
+  }),
+  ...(breadcrumbs.length > 0 && {
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        item: item.url,
+      })),
+    },
+  }),
+}
+---
+
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify(articleData)}
+/>
+
+

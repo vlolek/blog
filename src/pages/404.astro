@@ -1,81 +1,30 @@
 ---
-import Layout from '~/layouts/Layout.astro'
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import Link from '@/components/Link.astro'
+import PageHead from '@/components/PageHead.astro'
+import { buttonVariants } from '@/components/ui/button'
+import Layout from '@/layouts/Layout.astro'
+import { cn } from '@/lib/utils'
 ---
 
-<Layout title="Pagina Non Trovata" description="Pagina 404">
-  <div class="not-found flex-1 flex justify-center font-mono">
-    <div class="relative z-[1] w-full global-layout-width py-12 px-8 text-sm">
-      <div class="flex items-center text-muted-foreground mb-2 animate-fade-in">
-        <span class="text-green-500 mr-2 w-4 text-center">$</span>
-        <span class="animate-typing" style="animation-delay: 0s;">Piacere di conoscerti！</span>
-      </div>
-      <div class="flex items-center text-muted-foreground mb-2 animate-fade-in" style="animation-delay: 0.3s">
-        <span class="text-green-500 mr-2 w-4 text-center">$</span>
-        <span class="animate-typing" style="animation-delay: 0.3s">cd /home</span>
-      </div>
-      <div class="flex items-center text-muted-foreground mb-2 animate-fade-in" style="animation-delay: 0.5s">
-        <span class="text-red-500 mr-2 w-4 text-center">✗</span>
-        <span class="animate-typing" style="animation-delay: 0.5s">Errore: Directory non trovata！</span>
-      </div>
-      <div class="flex items-center text-muted-foreground mb-2 animate-fade-in" style="animation-delay: 0.7s">
-        <span class="text-green-500 mr-2 w-4 text-center">$</span>
-        <span class="animate-typing text-muted-foreground/50" style="animation-delay: 0.7s">Comandi disponibili:</span>
-      </div>
-      <div class="flex items-center text-muted-foreground mb-2 ml-5 animate-fade-in" style="animation-delay: 0.9s">
-        <span class="text-blue-500 mr-2 w-4 text-center">›</span>
-        <span class="animate-typing cursor-pointer hover:text-foreground" style="animation-delay: 0.9s" onclick="history.back()">cd ..</span
-        >
-      </div>
-      <div class="flex items-center text-muted-foreground mb-2 ml-5 animate-fade-in" style="animation-delay: 1.1s">
-        <span class="text-blue-500 mr-2 w-4 text-center">›</span>
-        <span class="animate-typing cursor-pointer hover:text-foreground" style="animation-delay: 1.1s" onclick="window.location.href='/'"
-          >cd /</span
-        >
-      </div>
+<Layout class="max-w-3xl">
+  <PageHead slot="head" title="Pagina non trovata" description="La pagina che stai cercando non esiste o è stata spostata." noindex />
+  <Breadcrumbs items={[{ label: '404', icon: 'lucide:circle-help' }]} />
+
+  <section
+    class="flex flex-col items-center justify-center gap-y-4 text-center"
+  >
+    <div class="max-w-md">
+      <h1 class="mb-4 text-3xl font-medium">404: Pagina non trovata</h1>
+      <p class="prose">Oops! La pagina che stai cercando non esiste.</p>
     </div>
-  </div>
+    <Link
+      href="/"
+      class={cn(buttonVariants({ variant: 'outline' }), 'flex gap-x-1.5 group')}
+      aria-label="Torna alla homepage"
+    >
+      <span class="transition-transform group-hover:-translate-x-1" aria-hidden="true">&larr;</span
+      > Vai alla home page
+    </Link>
+  </section>
 </Layout>
-
-<style>
-  .animate-typing {
-    animation: typing 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    overflow: hidden;
-    white-space: nowrap;
-    display: inline-block;
-  }
-
-  @keyframes typing {
-    from {
-      width: 0ch;
-    }
-    to {
-      width: var(--typing-width, 20ch);
-    }
-  }
-
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-      transform: translateY(-4px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    opacity: 0;
-    will-change: transform;
-  }
-</style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.animate-typing').forEach((el) => {
-      const text = el.textContent || ''
-      ;(el as HTMLElement).style.setProperty('--typing-width', `${text.length}ch`)
-    })
-  })
-</script>

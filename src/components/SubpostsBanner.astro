@@ -1,0 +1,261 @@
+---
+// Banner visibile che indica la presenza di subpost disponibili
+// Utile soprattutto su mobile dove i subpost sono nascosti nel dropdown
+import Link from '@/components/Link.astro'
+import { buttonVariants } from '@/components/ui/button'
+import type { PostCollection } from '@/lib/collections'
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  parentId: string
+  currentPostId: string
+  basePath: string
+  collection: PostCollection
+}
+
+const {
+  parentId,
+  currentPostId,
+  basePath,
+  collection,
+} = Astro.props
+
+// Importa le funzioni corrette in base alla collection
+let isSubpostFn: (id: string) => boolean
+let getParentIdFn: (id: string) => string
+let getByIdFn: (id: string) => Promise<any>
+let getSubpostsForParentFn: (
+  id: string,
+) => Promise<any[]>
+let getParentPostFn: (id: string) => Promise<any>
+
+if (collection === 'blog') {
+  const {
+    isSubpost,
+    getParentId,
+    getPostById,
+    getSubpostsForParent,
+    getParentPost,
+  } = await import('@/lib/collections')
+  isSubpostFn = isSubpost
+  getParentIdFn = getParentId
+  getByIdFn = getPostById
+  getSubpostsForParentFn = getSubpostsForParent
+  getParentPostFn = getParentPost
+} else if (collection === 'education') {
+  const {
+    isEducationSubpost,
+    getEducationParentId,
+    getEducationById,
+    getEducationSubpostsForParent,
+    getEducationParentPost,
+  } = await import('@/lib/collections')
+  isSubpostFn = isEducationSubpost
+  getParentIdFn = getEducationParentId
+  getByIdFn = getEducationById
+  getSubpostsForParentFn =
+    getEducationSubpostsForParent
+  getParentPostFn = getEducationParentPost
+}
+
+const isCurrentSubpost = isSubpostFn(
+  currentPostId,
+)
+const rootParentId = isCurrentSubpost
+  ? getParentIdFn(currentPostId)
+  : parentId
+
+const currentPost = !isCurrentSubpost
+  ? await getByIdFn(currentPostId)
+  : null
+const subposts =
+  await getSubpostsForParentFn(rootParentId)
+const parentPost = isCurrentSubpost
+  ? await getParentPostFn(currentPostId)
+  : null
+
+// Mostra il banner solo se ci sono subpost disponibili
+const hasSubposts = subposts.length > 0
+const activePost = parentPost || currentPost
+
+// Se siamo su un subpost, prendiamo il primo subpost non ancora letto
+// Se siamo sul post principale, prendiamo il primo subpost disponibile
+const firstSubpost =
+  subposts.length > 0 ? subposts[0] : null
+const currentSubpostIndex = isCurrentSubpost
+  ? subposts.findIndex(
+      (s) => s.id === currentPostId,
+    )
+  : -1
+const nextSubpost =
+  currentSubpostIndex >= 0 &&
+  currentSubpostIndex < subposts.length - 1
+    ? subposts[currentSubpostIndex + 1]
+    : null
+
+// Configurazione per collection
+const config = {
+  blog: {
+    icon: 'lucide:book-open-text',
+    titleSubpost: 'Continua la lettura',
+    titleParent:
+      'Questo articolo fa parte di una serie',
+    descriptionSubpostNext: (title: string) =>
+      `Leggi il prossimo capitolo: "${title}"`,
+    descriptionSubpostComplete: (count: number) =>
+      `Hai completato tutti i ${count} capitoli di questa serie.`,
+    descriptionParent: (count: number) =>
+      `Questo articolo contiene ${count} capitolo${count === 1 ? '' : 'i'} aggiuntivi.`,
+    itemName: 'capitoli',
+    buttonContinue: 'Continua a leggere',
+    buttonStart: 'Inizia a leggere',
+    buttonIndex: "Torna all'indice",
+    buttonAll: (count: number) =>
+      `Vedi tutti (${count})`,
+    ariaLabelAll: (count: number) =>
+      `Mostra tutti i ${count} capitoli disponibili`,
+  },
+  education: {
+    icon: 'lucide:book-open-text',
+    titleSubpost: 'Continua la lettura',
+    titleParent:
+      'Questo articolo fa parte di una serie',
+    descriptionSubpostNext: (title: string) =>
+      `Leggi il prossimo capitolo: "${title}"`,
+    descriptionSubpostComplete: (count: number) =>
+      `Hai completato tutti i ${count} capitoli di questa serie.`,
+    descriptionParent: (count: number) =>
+      `Questo articolo contiene ${count} capitolo${count === 1 ? '' : 'i'} aggiuntivi.`,
+    itemName: 'capitoli',
+    buttonContinue: 'Continua a leggere',
+    buttonStart: 'Inizia a leggere',
+    buttonIndex: "Torna all'indice",
+    buttonAll: (count: number) =>
+      `Vedi tutti (${count})`,
+    ariaLabelAll: (count: number) =>
+      `Mostra tutti i ${count} capitoli disponibili`,
+  },
+}
+
+const cfg = config[collection as keyof typeof config]
+---
+
+{
+  hasSubposts && (
+    <div
+      class="col-start-2 mx-auto w-full max-w-3xl xl:hidden"
+      id="subposts-banner"
+    >
+      <div class="bg-muted/50 border-border border p-4">
+        <div class="flex flex-col gap-3">
+          <div class="flex items-start gap-3">
+            <Icon
+              name={cfg.icon}
+              class="text-primary mt-0.5 size-5 flex-shrink-0"
+              aria-hidden="true"
+            />
+            <div class="flex-1">
+              <h3 class="text-foreground mb-1 text-sm font-semibold">
+                {isCurrentSubpost
+                  ? cfg.titleSubpost
+                  : cfg.titleParent}
+              </h3>
+              <p class="text-muted-foreground text-xs leading-relaxed">
+                {isCurrentSubpost
+                  ? nextSubpost
+                    ? cfg.descriptionSubpostNext(
+                        nextSubpost.data.title,
+                      )
+                    : cfg.descriptionSubpostComplete(
+                        subposts.length + 1,
+                      )
+                  : cfg.descriptionParent(
+                      subposts.length,
+                    )}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 sm:flex-row">
+            {isCurrentSubpost && nextSubpost ? (
+              <Link
+                href={`${basePath}/${nextSubpost.id}`}
+                class={buttonVariants({
+                  variant: 'default',
+                  size: 'sm',
+                })}
+                aria-label={`${cfg.buttonContinue}: ${nextSubpost.data.title}`}
+              >
+                <span>{cfg.buttonContinue}</span>
+                <Icon
+                  name="lucide:arrow-right"
+                  class="size-4"
+                  aria-hidden="true"
+                />
+              </Link>
+            ) : isCurrentSubpost &&
+              !nextSubpost &&
+              parentPost ? (
+              <Link
+                href={`${basePath}/${parentPost.id}`}
+                class={buttonVariants({
+                  variant: 'outline',
+                  size: 'sm',
+                })}
+                aria-label={`${cfg.buttonIndex}: ${parentPost.data.title}`}
+              >
+                <Icon
+                  name="lucide:corner-left-up"
+                  class="size-4"
+                  aria-hidden="true"
+                />
+                <span>{cfg.buttonIndex}</span>
+              </Link>
+            ) : firstSubpost ? (
+              <Link
+                href={`${basePath}/${firstSubpost.id}`}
+                class={buttonVariants({
+                  variant: 'default',
+                  size: 'sm',
+                })}
+                aria-label={`${cfg.buttonStart}: ${firstSubpost.data.title}`}
+              >
+                <span>{cfg.buttonStart}</span>
+                <Icon
+                  name="lucide:arrow-right"
+                  class="size-4"
+                  aria-hidden="true"
+                />
+              </Link>
+            ) : null}
+
+            <button
+              type="button"
+              onclick="document.getElementById('mobile-subposts-container')?.querySelector('details')?.setAttribute('open', '')"
+              class={buttonVariants({
+                variant: 'outline',
+                size: 'sm',
+              })}
+              aria-label={cfg.ariaLabelAll(
+                subposts.length +
+                  (activePost ? 1 : 0),
+              )}
+            >
+              <Icon
+                name="lucide:list"
+                class="size-4"
+                aria-hidden="true"
+              />
+              <span>
+                {cfg.buttonAll(
+                  subposts.length +
+                    (activePost ? 1 : 0),
+                )}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

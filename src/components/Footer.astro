@@ -1,0 +1,26 @@
+---
+import { SOCIAL_LINKS } from '@/consts'
+import Link from './Link.astro'
+import SocialIcons from './SocialIcons.astro'
+---
+
+<footer
+  class="mx-auto mb-8 flex w-full max-w-3xl flex-col items-center justify-center gap-y-2 px-4 sm:mb-4 sm:flex-row sm:justify-between"
+  role="contentinfo"
+  aria-label="Piè di pagina"
+>
+  <div class="flex flex-wrap items-center justify-center gap-x-2 text-center">
+    <span class="text-muted-foreground text-sm">
+      &copy; {new Date().getFullYear()} Tutti i diritti riservati.
+    </span>
+    <span class="text-muted-foreground text-sm">·</span>
+    <Link
+      href="/privacy"
+      class="text-muted-foreground hover:text-foreground text-sm transition-colors"
+      title="Leggi la privacy policy"
+    >
+      Privacy Policy
+    </Link>
+  </div>
+  <SocialIcons links={SOCIAL_LINKS} />
+</footer>

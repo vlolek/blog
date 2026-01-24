@@ -1,107 +1,182 @@
 ---
-import { SITE, POSTS_CONFIG, PROJECTS_CONFIG } from '~/config'
-import Layout from '~/layouts/Layout.astro'
-import SectionDivider from '~/components/base/SectionDivider.astro'
-import List from '~/components/posts/card/List.astro'
-import { getNumPosts, getPinnedPosts, getNumProjects, getNumEducation } from '~/lib/data'
-import type { CollectionEntry } from 'astro:content'
+import AuthorCard from '@/components/AuthorCard.astro'
+import BlogCard from '@/components/BlogCard.astro'
+import Link from '@/components/Link.astro'
+import PageHead from '@/components/PageHead.astro'
+import ProjectCard from '@/components/ProjectCard.astro'
+import { buttonVariants } from '@/components/ui/button'
+import { SITE } from '@/consts'
+import Layout from '@/layouts/Layout.astro'
+import {
+  getAllEducation,
+  getAllProjects,
+  getAuthorById,
+  getRecentPosts,
+} from '@/lib/collections'
 
-const { size, type } = POSTS_CONFIG.homePageConfig
-
-let showPosts: CollectionEntry<'posts'>[]
-const pinnedPosts = await getPinnedPosts()
-const hasPinnedPosts = pinnedPosts.length > 0
-if (hasPinnedPosts) {
-  showPosts = pinnedPosts
-} else {
-  showPosts = await getNumPosts(size)
-}
-
-const latestProjects = await getNumProjects(PROJECTS_CONFIG.homePageConfig.size)
-const latestEducation = await getNumEducation(1)
+const blog = await getRecentPosts(
+  SITE.featuredPostCount,
+)
+const author = await getAuthorById(
+  'vladlenoleksiuk',
+)
+// Prendi i primi 3 progetti più recenti (già ordinati per startDate da getAllProjects)
+const projects = (await getAllProjects()).slice(
+  0,
+  3,
+)
+// Prendi i primi 3 articoli di formazione più recenti
+const education = (await getAllEducation()).slice(
+  0,
+  3,
+)
 ---
 
-<Layout title="Home" description={SITE.description}>
-  <div class="relative z-[1]">
-    <div class="fade-up">
-      <div class="py-8 pb-10 px-6 sm:px-8">
-        <h1 class="flex flex-col gap-2 mb-2">
-          <span class="text-4xl sm:text-5xl tracking-tight"> Vladlen Oleksiuk </span>
-          <span class="text-muted-foreground font-light text-lg sm:text-xl block tracking-wide text-balance"> Backend Developer </span>
-        </h1>
+<Layout class="max-w-3xl space-y-6">
+  <PageHead includeOrganization={true} />
 
-        <a
-          href="https://github.com/vlolek"
-          target="_blank"
-          class="flex gap-2 items-center justify-between px-3 py-1 rounded-sm border border-border/50 hover:bg-accent hover:text-primary transition-all duration-300 mb-4"
-        >
-          <span class="flex gap-2">
-            <span class="icon-[mdi--github] size-5"></span>
-            <span class="block tracking-wide text-balance align-baseline flex items-center gap-1"> GitHub </span>
-          </span>
-          <span class="text-sm icon-[mdi--arrow-right] size-5"></span>
-        </a>
+  <section>
+    <h1 class="mb-4 text-3xl font-medium">
+      {SITE.title}
+    </h1>
+    {author && <AuthorCard author={author} />}
+  </section>
 
-        <!-- <div class="pro text-muted-foreground text-pretty">
-          <p>Studio, per ora, python.</p>
-        </div> -->
-
-        <!-- Lista dei link ai social, al momento sostituita con un pulsante per github. -->
-
-        <!-- <div class="mt-6 flex gap-6">
-          {
-            SOCIAL_LINKS.map((item) => {
-              return (
-                <SocialLink href={item.url} icon={item.icon} aria-label={`Link of ${item.name}`} count={item.count} label="followers" />
-              )
-            })
-          }
-        </div> -->
-        <SectionDivider />
-        <div class="py-8 pb-10">
-          <h2 class="text-2xl sm:text-3xl tracking-tight">Ultimi articoli</h2>
-          <p class="text-muted-foreground mb-6 mt-1">
-            {showPosts.length} articoli
-            {hasPinnedPosts ? `In evidenza` : 'recenti'}.
-          </p>
-          <List posts={showPosts} {type} coverLayout={POSTS_CONFIG.homePageConfig?.coverLayout} />
+  {
+    blog.length > 0 && (
+      <section
+        class="flex flex-col gap-y-4"
+        aria-labelledby="ultimi-post-heading"
+      >
+        <div class="flex items-center justify-between border-b pb-2">
+          <h2
+            id="ultimi-post-heading"
+            class="text-xl font-medium tracking-wider uppercase"
+          >
+            Ultimi post
+          </h2>
+          <Link
+            href="/blog"
+            class={
+              buttonVariants({
+                variant: 'ghost',
+                size: 'sm',
+              }) + ' group'
+            }
+            title="Vedi tutti i post del blog"
+          >
+            Tutti
+            <span
+              class="ml-1.5 transition-transform group-hover:translate-x-1"
+              aria-hidden="true"
+            >
+              &rarr;
+            </span>
+          </Link>
         </div>
-        {
-          latestProjects.length > 0 && (
-            <>
-              <SectionDivider />
-              <div class="py-8 pb-10">
-                <h2 class="text-2xl sm:text-3xl tracking-tight">Ultimi progetti</h2>
-                <p class="text-muted-foreground mb-6 mt-1">
-                  {latestProjects.length}
-                  {latestProjects.length > 1 ? ' progetti recenti' : ' progetto recente'}.
-                </p>
-                <List
-                  posts={latestProjects}
-                  type={PROJECTS_CONFIG.homePageConfig.type}
-                  coverLayout={PROJECTS_CONFIG.homePageConfig?.coverLayout}
-                  baseUrl="/projects"
-                />
-              </div>
-            </>
-          )
-        }
-        {
-          latestEducation.length > 0 && (
-            <>
-              <SectionDivider />
-              <div class="py-8 pb-10">
-                <h2 class="text-2xl sm:text-3xl tracking-tight">Formazione recente</h2>
-                <p class="text-muted-foreground mb-6 mt-1">
-                  {latestEducation.length}
-                  {latestEducation.length > 1 ? 'appunti di formazione recenti' : 'appunto di formazione recente'}.
-                </p>
-                <List posts={latestEducation} {type} coverLayout={POSTS_CONFIG.homePageConfig?.coverLayout} baseUrl="/education" />
-              </div>
-            </>
-          )
-        }
-      </div>
-    </div>
-  </div>
+        <ul
+          class="flex flex-col divide-y"
+          aria-label="Lista degli ultimi post del blog"
+        >
+          {blog.map((post) => (
+            <li>
+              <BlogCard entry={post} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    education.length > 0 && (
+      <section
+        class="flex flex-col gap-y-4"
+        aria-labelledby="ultimi-articoli-formazione-heading"
+      >
+        <div class="flex items-center justify-between border-b pb-2">
+          <h2
+            id="ultimi-articoli-formazione-heading"
+            class="text-xl font-medium tracking-wider uppercase"
+          >
+            Formazione
+          </h2>
+          <Link
+            href="/education"
+            class={
+              buttonVariants({
+                variant: 'ghost',
+                size: 'sm',
+              }) + ' group'
+            }
+            title="Vedi tutti gli articoli di formazione"
+          >
+            Tutto
+            <span
+              class="ml-1.5 transition-transform group-hover:translate-x-1"
+              aria-hidden="true"
+            >
+              &rarr;
+            </span>
+          </Link>
+        </div>
+        <ul
+          class="flex flex-col divide-y"
+          aria-label="Lista degli ultimi articoli di formazione"
+        >
+          {education.map((article) => (
+            <li>
+              <BlogCard entry={article} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    projects.length > 0 && (
+      <section
+        class="flex flex-col gap-y-4"
+        aria-labelledby="ultimi-progetti-heading"
+      >
+        <div class="flex items-center justify-between border-b pb-2">
+          <h2
+            id="ultimi-progetti-heading"
+            class="text-xl font-medium tracking-wider uppercase"
+          >
+            Progetti
+          </h2>
+          <Link
+            href="/projects"
+            class={
+              buttonVariants({
+                variant: 'ghost',
+                size: 'sm',
+              }) + ' group'
+            }
+            title="Vedi tutti i progetti"
+          >
+            Tutti
+            <span
+              class="ml-1.5 transition-transform group-hover:translate-x-1"
+              aria-hidden="true"
+            >
+              &rarr;
+            </span>
+          </Link>
+        </div>
+        <ul
+          class="flex flex-col divide-y"
+          aria-label="Lista degli ultimi progetti"
+        >
+          {projects.map((project) => (
+            <li>
+              <ProjectCard project={project} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </Layout>

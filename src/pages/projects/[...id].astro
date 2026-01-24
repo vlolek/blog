@@ -1,74 +1,296 @@
 ---
-import Layout from '~/layouts/Layout.astro'
-import MetaOnly from '~/components/posts/layouts/MetaOnly.astro'
-import CoverSplit from '~/components/posts/layouts/CoverSplit.astro'
-import CoverTop from '~/components/posts/layouts/CoverTop.astro'
-import ProjectNavigation from '~/components/posts/base/ProjectNavigation.astro'
-import PostFeatures from '~/components/posts/toc/PostFeatures.astro'
-import TocMobile from '~/components/posts/toc/TocMobile.astro'
-import { PROJECTS_CONFIG, SITE } from '~/config'
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import Link from '@/components/Link.astro'
+import ProjectHead from '@/components/ProjectHead.astro'
+import { badgeVariants } from '@/components/ui/badge'
+import {
+  Button,
+  buttonVariants,
+} from '@/components/ui/button'
+import Layout from '@/layouts/Layout.astro'
+import {
+  getAdjacentProjects,
+  getAllProjects,
+} from '@/lib/collections'
+import { cn, formatDate } from '@/lib/utils'
+import { Icon } from 'astro-icon/components'
+import { Image } from 'astro:assets'
 import { render } from 'astro:content'
-import { getAllProjects } from '~/lib/data'
-import License from '~/components/posts/base/License.astro'
 
+// Genera i percorsi statici per tutti i progetti
 export async function getStaticPaths() {
-  const sortedProjects = await getAllProjects()
-  return sortedProjects.map((item, index) => ({
-    params: { id: item.id },
-    props: {
-      post: item,
-      posts: sortedProjects,
-      prev: index + 1 < sortedProjects.length ? sortedProjects[index + 1] : null,
-      next: index > 0 ? sortedProjects[index - 1] : null,
-    },
+  const projects = await getAllProjects()
+  return projects.map((project) => ({
+    params: { id: project.id },
+    props: project,
   }))
 }
 
-const { post, posts, prev, next } = Astro.props
-const { data: frontmatter } = post
-const { Content, headings, remarkPluginFrontmatter } = await render(post)
-
-const filterHeadings = headings.filter((heading: any) => heading.slug !== 'footnote-label')
-
-const hasValidHeadings = filterHeadings.length > 1
-type LayoutKey = 'metaOnly' | 'coverSplit' | 'coverTop'
-
-const layoutMap: Record<LayoutKey, any> = {
-  metaOnly: MetaOnly,
-  coverSplit: CoverSplit,
-  coverTop: CoverTop,
-}
-
-const layoutKey: LayoutKey = (frontmatter.postType as LayoutKey) || (PROJECTS_CONFIG.postType as LayoutKey)
-const PostLayout = layoutMap[layoutKey]
+const project = Astro.props
+const currentProjectId = Astro.params.id
+const { Content } = await render(project)
+const navigation = await getAdjacentProjects(
+  currentProjectId,
+)
 ---
 
-<Layout
-  title={frontmatter.title}
-  description={frontmatter.description || frontmatter.title}
-  image={frontmatter.ogImage?.src ? `${SITE.website}${frontmatter.ogImage.src}` : SITE.ogImage}
->
-  <div class="relative flex flex-col justify-between h-fit z-[1]">
-    <TocMobile {post} {posts} headings={filterHeadings} />
-    <PostLayout {frontmatter} minutesRead={remarkPluginFrontmatter.minutesRead} wordCount={remarkPluginFrontmatter.wordCount}>
-      <Content />
-      {
-        frontmatter.license && (
-          <>
-            <hr class="pb-6" />
-            <License license={frontmatter.license} title={frontmatter.title} author={frontmatter.author} />
-          </>
-        )
-      }
-    </PostLayout>
+<Layout>
+  <ProjectHead slot="head" project={project} />
+
+  <section
+    class="grid grid-cols-[minmax(0px,1fr)_min(calc(var(--breakpoint-md)-2rem),100%)_minmax(0px,1fr)] gap-y-6"
+  >
+    <div class="col-start-2 py-3 xl:py-0">
+      <Breadcrumbs
+        items={[
+          {
+            href: '/projects',
+            label: 'Progetti',
+            icon: 'lucide:briefcase',
+          },
+          {
+            href: `/projects/${currentProjectId}`,
+            label: project.data.name,
+            icon: 'lucide:folder-open',
+          },
+        ]}
+      />
+    </div>
+
     {
-      posts.length > 1 && (
-        <div class="px-6 sm:px-8 pb-6 sm:pb-8">
-          <ProjectNavigation {prev} {next} />
-        </div>
+      project.data.image && (
+        <Image
+          src={project.data.image}
+          alt={project.data.name}
+          width={1200}
+          height={630}
+          class="col-span-full mx-auto w-full max-w-3xl object-cover"
+        />
       )
     }
-    {hasValidHeadings && <PostFeatures {post} {posts} headings={filterHeadings} />}
-  </div>
-</Layout>
 
+    <section
+      class="col-start-2 flex flex-col gap-y-6 text-center"
+    >
+      <div class="flex flex-col">
+        <h1
+          class="mb-2 scroll-mt-31 text-3xl leading-tight font-medium sm:text-4xl"
+          id="project-title"
+        >
+          {project.data.name}
+        </h1>
+
+        <div
+          class="text-muted-foreground divide-border mb-4 flex flex-col items-center justify-center divide-y text-xs sm:flex-row sm:flex-wrap sm:divide-x sm:divide-y-0 sm:text-sm"
+        >
+          {
+            project.data.startDate && (
+              <div class="flex w-full items-center justify-center gap-2 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0">
+                <Icon
+                  name="lucide:calendar"
+                  class="size-3"
+                  aria-hidden="true"
+                />
+                <span>
+                  {formatDate(
+                    project.data.startDate,
+                  )}
+                  {project.data.endDate
+                    ? ` → ${formatDate(project.data.endDate)}`
+                    : ' → Present'}
+                </span>
+              </div>
+            )
+          }
+
+          {
+            project.data.link && (
+              <div class="flex w-full items-center justify-center gap-2 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0">
+                <a
+                  href={project.data.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Link esterno (si apre in una nuova finestra)"
+                  class="text-foreground hover:text-foreground/80 flex items-center gap-1.5 transition-colors"
+                >
+                  <Icon
+                    name="lucide:external-link"
+                    class="size-3"
+                    aria-hidden="true"
+                  />
+                  <span>Link esterno</span>
+                  <span class="sr-only">
+                    {' '}
+                    (si apre in una nuova
+                    finestra)
+                  </span>
+                </a>
+              </div>
+            )
+          }
+        </div>
+
+        <div
+          class="flex flex-wrap justify-center gap-2"
+        >
+          {
+            project.data.tags &&
+              project.data.tags.length > 0 &&
+              project.data.tags.map((tag) => (
+                <span
+                  class={badgeVariants({
+                    variant: 'muted',
+                  })}
+                >
+                  <Icon
+                    name="lucide:hash"
+                    class="size-3"
+                    aria-hidden="true"
+                  />
+                  {tag}
+                </span>
+              ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <article class="prose col-start-2 max-w-none">
+      <Content />
+    </article>
+
+    <!-- Navigazione tra progetti -->
+    <nav
+      class="col-start-2 grid grid-cols-1 gap-4 sm:grid-cols-2"
+      aria-label="Navigazione tra i progetti"
+    >
+      <Link
+        href={navigation.older
+          ? `/projects/${navigation.older.id}#project-title`
+          : '#'}
+        class={cn(
+          buttonVariants({ variant: 'outline' }),
+          'group flex items-center justify-start size-full',
+          !navigation.older &&
+            'pointer-events-none opacity-50 cursor-not-allowed',
+        )}
+        aria-disabled={!navigation.older}
+      >
+        <Icon
+          name="lucide:arrow-left"
+          class="mr-2 size-4 transition-transform group-hover:-translate-x-1"
+          aria-hidden="true"
+        />
+        <div
+          class="flex flex-col items-start overflow-hidden text-wrap"
+        >
+          <span
+            class="text-muted-foreground text-left text-xs"
+          >
+            Progetto precedente
+          </span>
+          <span
+            class="w-full text-left text-sm text-balance text-ellipsis"
+          >
+            {
+              navigation.older?.data.name ||
+                'Sei al progetto più vecchio!'
+            }
+          </span>
+        </div>
+      </Link>
+
+      <Link
+        href={navigation.newer
+          ? `/projects/${navigation.newer.id}#project-title`
+          : '#'}
+        class={cn(
+          buttonVariants({ variant: 'outline' }),
+          'group flex items-center justify-end size-full',
+          !navigation.newer &&
+            'pointer-events-none opacity-50 cursor-not-allowed',
+        )}
+        aria-disabled={!navigation.newer}
+      >
+        <div
+          class="flex flex-col items-end overflow-hidden text-wrap"
+        >
+          <span
+            class="text-muted-foreground text-right text-xs"
+          >
+            Progetto successivo
+          </span>
+          <span
+            class="w-full text-right text-sm text-balance text-ellipsis"
+          >
+            {
+              navigation.newer?.data.name ||
+                'Sei al progetto più recente!'
+            }
+          </span>
+        </div>
+        <Icon
+          name="lucide:arrow-right"
+          class="ml-2 size-4 transition-transform group-hover:translate-x-1"
+          aria-hidden="true"
+        />
+      </Link>
+    </nav>
+  </section>
+
+  <Button
+    variant="outline"
+    size="icon"
+    className="group fixed right-8 bottom-8 z-50 hidden"
+    id="scroll-to-top"
+    title="Torna in cima"
+    aria-label="Torna in cima"
+  >
+    <Icon
+      name="lucide:arrow-up"
+      class="mx-auto size-4 transition-all group-hover:-translate-y-0.5"
+      aria-hidden="true"
+    />
+  </Button>
+
+  <script>
+    document.addEventListener(
+      'astro:page-load',
+      () => {
+        const scrollToTopButton =
+          document.getElementById('scroll-to-top')
+        const footer =
+          document.querySelector('footer')
+
+        if (scrollToTopButton && footer) {
+          scrollToTopButton.addEventListener(
+            'click',
+            () => {
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+              })
+            },
+          )
+
+          window.addEventListener(
+            'scroll',
+            () => {
+              const footerRect =
+                footer.getBoundingClientRect()
+              const isFooterVisible =
+                footerRect.top <=
+                window.innerHeight
+
+              scrollToTopButton.classList.toggle(
+                'hidden',
+                window.scrollY <= 300 ||
+                  isFooterVisible,
+              )
+            },
+          )
+        }
+      },
+    )
+  </script>
+</Layout>
