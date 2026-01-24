@@ -1,22 +1,22 @@
 ---
 import PostPageContent from '@/components/PostPageContent.astro'
 import {
-  getAdjacentEducation,
-  getAllEducationAndSubposts,
-  getEducationCombinedReadingTime,
-  getEducationParentId,
-  getEducationParentPost,
-  getEducationReadingTime,
-  getEducationSubpostCount,
-  getEducationTOCSections,
-  hasEducationSubposts,
-  isEducationSubpost,
+  getAdjacentPosts,
+  getAllPostsAndSubposts,
+  getCombinedReadingTime,
+  getParentId,
+  getParentPost,
+  getPostReadingTime,
+  getSubpostCount,
+  getTOCSections,
+  hasSubposts,
+  isSubpost,
   parseAuthors,
 } from '@/lib/collections'
 import { render } from 'astro:content'
 
 export async function getStaticPaths() {
-  const posts = await getAllEducationAndSubposts()
+  const posts = await getAllPostsAndSubposts()
   return posts.map((post) => ({
     params: { id: post.id },
     props: post,
@@ -28,27 +28,27 @@ const currentPostId = Astro.params.id
 const { Content, headings } = await render(post)
 const authors = await parseAuthors(post.data.authors ?? [])
 
-const isCurrentSubpost = isEducationSubpost(currentPostId)
-const navigation = await getAdjacentEducation(currentPostId)
-const parentPost = isCurrentSubpost ? await getEducationParentPost(currentPostId) : null
+const isCurrentSubpost = isSubpost(currentPostId)
+const navigation = await getAdjacentPosts(currentPostId)
+const parentPost = isCurrentSubpost ? await getParentPost(currentPostId) : null
 
-const hasChildPosts = await hasEducationSubposts(currentPostId)
+const hasChildPosts = await hasSubposts(currentPostId)
 const subpostCount = !isCurrentSubpost
-  ? await getEducationSubpostCount(currentPostId)
+  ? await getSubpostCount(currentPostId)
   : 0
-const postReadingTime = await getEducationReadingTime(currentPostId)
+const postReadingTime = await getPostReadingTime(currentPostId)
 const combinedReadingTime =
   hasChildPosts && !isCurrentSubpost
-    ? await getEducationCombinedReadingTime(currentPostId)
+    ? await getCombinedReadingTime(currentPostId)
     : null
 
-const tocSections = await getEducationTOCSections(currentPostId)
+const tocSections = await getTOCSections(currentPostId)
 ---
 
 <PostPageContent
   post={post}
-  collection="education"
-  basePath="/education"
+  collection="blog"
+  basePath="/blog"
   currentPostId={currentPostId}
   Content={Content}
   headings={headings}
@@ -61,5 +61,5 @@ const tocSections = await getEducationTOCSections(currentPostId)
   combinedReadingTime={combinedReadingTime}
   tocSections={tocSections}
   navigation={navigation}
-  getParentId={getEducationParentId}
+  getParentId={getParentId}
 />

@@ -1,0 +1,93 @@
+---
+import BlogCard from '@/components/BlogCard.astro'
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import PageHead from '@/components/PageHead.astro'
+import PaginationComponent from '@/components/ui/pagination'
+import { SITE } from '@/consts'
+import Layout from '@/layouts/Layout.astro'
+import {
+  getAllPosts,
+  groupPostsByYear,
+} from '@/lib/collections'
+import type { PaginateFunction } from 'astro'
+
+export async function getStaticPaths({
+  paginate,
+}: {
+  paginate: PaginateFunction
+}) {
+  const allPosts = await getAllPosts()
+  return paginate(allPosts, {
+    pageSize: SITE.postsPerPage,
+  })
+}
+
+const { page } = Astro.props
+
+const postsByYear = groupPostsByYear(page.data)
+const years = Object.keys(postsByYear).sort(
+  (a, b) => parseInt(b) - parseInt(a),
+)
+---
+
+<Layout class="max-w-3xl">
+  <PageHead slot="head" title="Blog" />
+  <Breadcrumbs
+    items={[
+      {
+        label: 'Blog',
+        href: '/blog',
+        icon: 'lucide:library-big',
+      },
+      {
+        label: `Pagina ${page.currentPage}`,
+        icon: 'lucide:book-copy',
+      },
+    ]}
+  />
+
+  <div
+    class="flex min-h-[calc(100vh-18rem)] flex-col gap-y-8"
+  >
+    {
+      years.map((year) => (
+        <section
+          class="flex flex-col gap-y-4"
+          aria-labelledby={`year-${year}`}
+        >
+          <div
+            class="font-medium"
+            id={`year-${year}`}
+          >
+            {year}
+          </div>
+          <ul
+            class="flex flex-col"
+            aria-label={`Articoli pubblicati nel ${year}`}
+          >
+            {postsByYear[year].map(
+              (post, index) => {
+                const isFirst = index === 0
+                const isLast =
+                  index ===
+                  postsByYear[year].length - 1
+                return (
+                  <li>
+                    <BlogCard entry={post} />
+                  </li>
+                )
+              },
+            )}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <PaginationComponent
+    currentPage={page.currentPage}
+    totalPages={page.lastPage}
+    baseUrl="/blog/"
+    client:load
+  />
+</Layout>

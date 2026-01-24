@@ -1,0 +1,65 @@
+---
+import BlogCard from '@/components/BlogCard.astro'
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import PageHead from '@/components/PageHead.astro'
+import Layout from '@/layouts/Layout.astro'
+import {
+  getAllTags,
+  getPostsByTag,
+} from '@/lib/collections'
+
+export async function getStaticPaths() {
+  const tagMap = await getAllTags()
+  const uniqueTags = Array.from(tagMap.keys())
+
+  return Promise.all(
+    uniqueTags.map(async (tag) => {
+      const posts = await getPostsByTag(tag)
+      return {
+        params: { id: tag },
+        props: {
+          tag,
+          posts,
+        },
+      }
+    }),
+  )
+}
+
+const { tag, posts } = Astro.props
+---
+
+<Layout class="max-w-3xl">
+  <PageHead
+    title={`Post con tag "${tag}"`}
+    description={`Una raccolta di post con tag ${tag}.`}
+    noindex
+  />
+  <Breadcrumbs
+    items={[
+      {
+        href: '/tags',
+        label: 'Tag',
+        icon: 'lucide:tags',
+      },
+      { label: tag, icon: 'lucide:tag' },
+    ]}
+  />
+
+  <ul
+    class="flex flex-col"
+    aria-label={`Articoli con tag ${tag}`}
+  >
+    {
+      posts.map((post, index) => {
+        const isFirst = index === 0
+        const isLast = index === posts.length - 1
+        return (
+          <li>
+            <BlogCard entry={post} />
+          </li>
+        )
+      })
+    }
+  </ul>
+</Layout>

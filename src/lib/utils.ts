@@ -1,63 +1,57 @@
-import type { CollectionEntry } from 'astro:content'
-import { clsx, type ClassValue } from 'clsx'
+import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
-export function cn(...classes: ClassValue[]) {
-  return twMerge(clsx(classes))
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }
 
-// 文章按时间排序
-export function postsSort(posts: CollectionEntry<'posts'>[]) {
-  return posts.slice().sort((a, b) => {
-    const dateA = a.data.updatedDate ?? a.data.pubDate
-    const dateB = b.data.updatedDate ?? b.data.pubDate
-    return new Date(dateB).getTime() - new Date(dateA).getTime()
-  })
+export function formatDate(date: Date) {
+  return Intl.DateTimeFormat('it-IT', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date)
 }
 
-// 日期格式化类型
-export type DateFormat = 'default' | 'dot' | 'short' | 'iso' | 'chinese'
+export function calculateWordCountFromHtml(
+  html: string | null | undefined,
+): number {
+  if (!html) return 0
+  const textOnly = html.replace(/<[^>]+>/g, '')
+  return textOnly.split(/\s+/).filter(Boolean).length
+}
 
-// Nomi dei mesi in italiano abbreviati
-const italianMonths = [
-  'Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu',
-  'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'
-]
+export function readingTime(wordCount: number): string {
+  const readingTimeMinutes = Math.max(1, Math.round(wordCount / 200))
+  return `${readingTimeMinutes} min di lettura`
+}
 
-// 日期格式化函数
-export const formatDate = (date: Date, format: DateFormat = 'default'): string => {
-  switch (format) {
-    case 'dot':
-      // 2020.03.03 格式
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      return `${year}.${month}.${day}`
-
-    case 'short':
-      // 00 Gen, 2000 格式 (italiano)
-      const shortYear = date.getFullYear()
-      const shortMonth = italianMonths[date.getMonth()]
-      const shortDay = String(date.getDate()).padStart(2, '0')
-      return `${shortDay} ${shortMonth}, ${shortYear}`
-
-    case 'iso':
-      // 2020-03-03 格式
-      return date.toISOString().split('T')[0]
-
-    case 'chinese':
-      // 2020年3月3日 格式
-      const chineseYear = date.getFullYear()
-      const chineseMonth = date.getMonth() + 1
-      const chineseDay = date.getDate()
-      return `${chineseYear}年${chineseMonth}月${chineseDay}日`
-
-    case 'default':
-    default:
-      // 00 Gen, 2000 格式（默认，italiano）
-      const defaultYear = date.getFullYear()
-      const defaultMonth = italianMonths[date.getMonth()]
-      const defaultDay = String(date.getDate()).padStart(2, '0')
-      return `${defaultDay} ${defaultMonth}, ${defaultYear}`
+export function getHeadingMargin(depth: number): string {
+  const margins: Record<number, string> = {
+    3: 'ml-4',
+    4: 'ml-8',
+    5: 'ml-12',
+    6: 'ml-16',
   }
+  return margins[depth] || ''
+}
+
+/**
+ * Normalizza un URL per l'uso come canonical URL.
+ * - Mantiene il trailing slash per la homepage (/)
+ * - Rimuove il trailing slash dalle altre pagine
+ * - Rimuove i query params
+ *
+ * @param url - L'URL da normalizzare (es. Astro.url)
+ * @param site - L'URL base del sito (es. Astro.site)
+ * @returns Un URL normalizzato senza query params
+ */
+export function getCanonicalUrl(url: URL, site: URL | string | undefined): URL {
+  // Normalizza il pathname: mantieni trailing slash solo per la homepage
+  const pathname = url.pathname === '/' ? '/' : url.pathname.replace(/\/$/, '')
+  
+  // Crea un nuovo URL con pathname normalizzato e senza query params
+  const canonicalUrl = new URL(pathname, site)
+  
+  return canonicalUrl
 }

@@ -1,0 +1,190 @@
+---
+import Link from '@/components/Link.astro'
+import { buttonVariants } from '@/components/ui/button'
+import type { PostCollection } from '@/lib/collections'
+import { cn } from '@/lib/utils'
+import { Icon } from 'astro-icon/components'
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  newerPost: CollectionEntry<
+    'blog' | 'education'
+  > | null
+  olderPost: CollectionEntry<
+    'blog' | 'education'
+  > | null
+  parentPost?: CollectionEntry<
+    'blog' | 'education'
+  > | null
+  basePath: string
+  collection: PostCollection
+}
+
+const {
+  newerPost,
+  olderPost,
+  parentPost,
+  basePath,
+  collection,
+} = Astro.props
+const isSubpost = !!parentPost
+
+// Testi personalizzati per collection
+const labels = {
+  blog: {
+    ariaLabel: 'Navigazione tra i post',
+    olderLabel: 'Post precedente',
+    newerLabel: 'Post successivo',
+    parentLabel: 'Post principale',
+    olderEmpty: 'Sei al post più vecchio!',
+    newerEmpty: 'Sei al post più recente!',
+    olderSubpostEmpty: 'Nessun post precedente',
+    newerSubpostEmpty: 'Nessun post successivo',
+    parentEmpty: 'Nessun post principale',
+  },
+  education: {
+    ariaLabel:
+      'Navigazione tra i post di formazione',
+    olderLabel: 'Post precedente',
+    newerLabel: 'Post successivo',
+    parentLabel: 'Post principale',
+    olderEmpty: 'Sei al post più vecchio!',
+    newerEmpty: 'Sei al post più recente!',
+    olderSubpostEmpty: 'Nessun post precedente',
+    newerSubpostEmpty: 'Nessun post successivo',
+    parentEmpty: 'Nessun post principale',
+  },
+}
+
+const text = labels[collection]
+---
+
+<nav
+  class={cn(
+    'col-start-2 grid grid-cols-1 gap-4',
+    isSubpost
+      ? 'sm:grid-cols-3'
+      : 'sm:grid-cols-2',
+  )}
+  aria-label={text.ariaLabel}
+>
+  <Link
+    href={olderPost
+      ? `${basePath}/${olderPost.id}#post-title`
+      : '#'}
+    class={cn(
+      buttonVariants({ variant: 'outline' }),
+      'group flex items-center justify-start size-full',
+      !olderPost &&
+        'pointer-events-none opacity-50 cursor-not-allowed',
+    )}
+    aria-disabled={!olderPost}
+    title={olderPost
+      ? `Vai al post precedente: ${olderPost.data.title}`
+      : undefined}
+  >
+    <Icon
+      name="lucide:arrow-left"
+      class="mr-2 size-4 transition-transform group-hover:-translate-x-1"
+      aria-hidden="true"
+    />
+    <div
+      class="flex flex-col items-start overflow-hidden text-wrap"
+    >
+      <span
+        class="text-muted-foreground text-left text-xs"
+      >
+        {text.olderLabel}
+      </span>
+      <span
+        class="w-full text-left text-sm text-balance text-ellipsis"
+      >
+        {
+          olderPost?.data.title ||
+            (isSubpost
+              ? text.olderSubpostEmpty
+              : text.olderEmpty)
+        }
+      </span>
+    </div>
+  </Link>
+
+  {
+    isSubpost && (
+      <Link
+        href={
+          parentPost
+            ? `${basePath}/${parentPost.id}#post-title`
+            : '#'
+        }
+        class={cn(
+          buttonVariants({ variant: 'outline' }),
+          'group flex size-full items-center justify-center',
+          !parentPost &&
+            'pointer-events-none cursor-not-allowed opacity-50',
+        )}
+        title={
+          parentPost
+            ? `Vai al post principale: ${parentPost.data.title}`
+            : undefined
+        }
+      >
+        <Icon
+          name="lucide:corner-left-up"
+          class="mr-2 size-4 transition-transform group-hover:-translate-y-1"
+          aria-hidden="true"
+        />
+        <div class="flex flex-col items-center overflow-hidden text-wrap">
+          <span class="text-muted-foreground text-center text-xs">
+            {text.parentLabel}
+          </span>
+          <span class="w-full text-center text-sm text-balance text-ellipsis">
+            {parentPost?.data.title ||
+              text.parentEmpty}
+          </span>
+        </div>
+      </Link>
+    )
+  }
+
+  <Link
+    href={newerPost
+      ? `${basePath}/${newerPost.id}#post-title`
+      : '#'}
+    class={cn(
+      buttonVariants({ variant: 'outline' }),
+      'group flex items-center justify-end size-full',
+      !newerPost &&
+        'pointer-events-none opacity-50 cursor-not-allowed',
+    )}
+    aria-disabled={!newerPost}
+    title={newerPost
+      ? `Vai al post successivo: ${newerPost.data.title}`
+      : undefined}
+  >
+    <div
+      class="flex flex-col items-end overflow-hidden text-wrap"
+    >
+      <span
+        class="text-muted-foreground text-right text-xs"
+      >
+        {text.newerLabel}
+      </span>
+      <span
+        class="w-full text-right text-sm text-balance text-ellipsis"
+      >
+        {
+          newerPost?.data.title ||
+            (isSubpost
+              ? text.newerSubpostEmpty
+              : text.newerEmpty)
+        }
+      </span>
+    </div>
+    <Icon
+      name="lucide:arrow-right"
+      class="ml-2 size-4 transition-transform group-hover:translate-x-1"
+      aria-hidden="true"
+    />
+  </Link>
+</nav>

@@ -1,0 +1,76 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import EducationCard from '@/components/EducationCard.astro'
+import PageHead from '@/components/PageHead.astro'
+import Layout from '@/layouts/Layout.astro'
+import {
+  getAllEducation,
+  groupEducationByYear,
+} from '@/lib/collections'
+
+const allEducation = await getAllEducation()
+const educationByYear =
+  groupEducationByYear(allEducation)
+const years = Object.keys(educationByYear).sort(
+  (a, b) => parseInt(b) - parseInt(a),
+)
+---
+
+<Layout class="max-w-3xl">
+  <PageHead slot="head" title="Formazione" />
+  <Breadcrumbs
+    items={[
+      {
+        label: 'Formazione',
+        icon: 'lucide:graduation-cap',
+      },
+    ]}
+  />
+
+  <div
+    class="flex min-h-[calc(100vh-18rem)] flex-col gap-y-8"
+  >
+    {
+      years.length > 0 ? (
+        years.map((year) => (
+          <section
+            class="flex flex-col gap-y-4"
+            aria-labelledby={`education-year-${year}`}
+          >
+            <div
+              class="font-medium"
+              id={`education-year-${year}`}
+            >
+              {year}
+            </div>
+            <ul
+              class="flex flex-col"
+              aria-label={`Contenuti di formazione pubblicati nel ${year}`}
+            >
+              {educationByYear[year].map(
+                (post, index) => {
+                  const isFirst = index === 0
+                  const isLast =
+                    index ===
+                    educationByYear[year].length -
+                      1
+                  return (
+                    <li>
+                      <EducationCard
+                        entry={post}
+                      />
+                    </li>
+                  )
+                },
+              )}
+            </ul>
+          </section>
+        ))
+      ) : (
+        <p class="text-muted-foreground text-center">
+          Nessun contenuto di formazione trovato.
+        </p>
+      )
+    }
+  </div>
+</Layout>
