@@ -6,7 +6,6 @@ WORKDIR /app
 
 # Copia i file di configurazione delle dipendenze
 COPY package*.json ./
-COPY patches/ ./patches/
 
 # Installa le dipendenze
 RUN npm ci --only=production
