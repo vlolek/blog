@@ -1,0 +1,259 @@
+---
+title: 'Tipi di Dati Fondamentali in Python'
+description: 'Numeri, stringhe, liste, dizionari e set: come scegliere la struttura giusta e lavorare con i dati in modo pulito ed efficiente.'
+date: 2026-02-01
+tags:
+  [
+    'python',
+    'data-types',
+    'basics',
+    'best-practices',
+  ]
+authors: ['vlolek']
+order: 4
+---
+
+## Tipi di Dati Fondamentali: la base per lavorare con i dati
+
+Python è **dinamicamente tipizzato**: puoi assegnare valori senza dichiarare il tipo. È comodo e veloce, ma per scrivere codice robusto serve conoscere bene le strutture dati e i loro punti forti.
+
+In questa guida trovi 5 “mattoni” principali:
+
+- Numeri
+- Stringhe
+- Liste
+- Dizionari
+- Set
+
+---
+
+## 1. Tipi Numerici (int, float, complex)
+
+I numeri servono per contatori, calcoli, prezzi, percentuali, coordinate, ecc.
+
+```python
+# int (interi)
+eta = 25
+popolazione = 7_800_000_000  # underscore per leggibilità
+
+# float (decimali)
+temperatura = 36.6
+pi = 3.14159
+
+# complex (complessi)
+z = 3 + 4j
+parte_reale = z.real
+parte_immaginaria = z.imag
+```
+
+## Operazioni comuni:
+
+```python
+somma = 10 + 5
+differenza = 10 - 5
+prodotto = 10 * 5
+divisione = 10 / 3          # float
+divisione_intera = 10 // 3  # int
+resto = 10 % 3
+potenza = 2 ** 10
+```
+
+## Controllo tipo “sicuro” (utile quando validi input):
+
+```python
+def calcola_doppio(x):
+    if not isinstance(x, (int, float)):
+        raise TypeError("Il parametro deve essere un numero")
+    return x * 2
+```
+
+## Nota importante sui float (precisione):
+
+```python
+print(0.1 + 0.2)  # 0.30000000000000004
+```
+
+### 2. Stringhe (str): testo, parsing, formattazione
+
+## Le stringhe sono immutabili: ogni modifica crea una nuova stringa.
+
+### Formattazione moderna con f-string:
+
+```python
+nome = "Mario"
+eta = 30
+messaggio = f"{nome} ha {eta} anni"
+```
+
+## Pulizia e normalizzazione (molto usato su email, input, dati sporchi):
+
+```python
+email = "  esempio@EMAIL.com  "
+email_pulita = email.strip().lower()  # "vladoleksuk0@gmail.com"
+```
+
+## Split e join:
+
+```python
+parole = "Python è fantastico".split()     # ['Python', 'è', 'fantastico']
+frase = " ".join(parole)                  # "Python è fantastico"
+
+csv = "nome,cognome,eta"
+campi = csv.split(",")
+```
+
+## Concatenazioni ripetute: meglio join():
+
+```python
+#  lento (soprattutto su molte iterazioni)
+risultato = ""
+for parola in ["a"] * 10000:
+    risultato += parola
+
+# veloce
+risultato = "".join(["a"] * 10000)
+```
+
+# 3. Liste (list): sequenze ordinate e mutabili
+
+## Usa le liste quando:
+
+- ti serve ordine
+- i duplicati sono ok
+- vuoi append/extend, slicing, ecc
+
+## Creazione e list comprehension:
+
+```python
+numeri = [1, 2, 3, 4, 5]
+vuota = []
+
+quadrati = [x * x for x in range(10)]
+pari = [x for x in range(20) if x % 2 == 0]
+```
+
+## Slicing (potentissimo per sotto-sequenze):
+
+```python
+lista = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+primi_tre = lista[:3]     # [0, 1, 2]
+ultimi_tre = lista[-3:]   # [7, 8, 9]
+ogni_secondo = lista[::2] # [0, 2, 4, 6, 8]
+inversa = lista[::-1]     # [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+```
+
+## Metodi fondamentali:
+
+```python
+dati = [1, 2, 3]
+dati.append(4)        # [1, 2, 3, 4]
+dati.extend([5, 6])   # [1, 2, 3, 4, 5, 6]
+dati.insert(0, 0)     # [0, 1, 2, 3, 4, 5, 6]
+
+ultimo = dati.pop()   # rimuove e ritorna l'ultimo
+```
+
+# 4. Dizionari (dict): chiave → valore \_ lookup veloce
+
+## Usa i dizionari quando:
+
+- vuoi associare chiavi a valori
+- ti serve lookup rapido(di solito O(1))
+
+## Esempio classico:
+
+```python
+utente = {
+    "nome": "Laura",
+    "eta": 28,
+    "citta": "Milano",
+    "hobby": ["lettura", "yoga", "coding"],
+}
+```
+
+## Accesso "sicuro" con get():
+
+```python
+email = utente.get("email")  # None se non esiste
+email = utente.get("email", "vladoleskuk0@gmail.com")
+```
+
+## Creazione elegante con comprehension:
+
+```python
+quadrati = {x: x * x for x in range(1, 6)}
+```
+
+## Merge (Python 3.9+):
+
+```python
+defaults = {"tema": "scuro", "lingua": "it"}
+preferenze = {"tema": "chiaro"}
+
+config = defaults | preferenze
+```
+
+## Iterazione corretta:
+
+```python
+for chiave, valore in utente.items():
+    print(chiave, valore)
+```
+
+# 5. Set (set): elementi unici + operazioni insiemistiche
+
+## Usa i set quando:
+
+- Vuoi unicità (niente duplicati)
+- Vuoi operazioni come unione/intersezione/differenza
+- Vuoi membership check veloce (O(1))
+
+## Creazione:
+
+```python
+vuoto = set()  # NON {} (che crea un dict)
+numeri = {1, 2, 3, 4, 5}
+```
+
+## Rimuovere duplicati da una lista:
+
+```python
+lista = [1, 2, 2, 3, 3, 3, 4]
+unici = list(set(lista))  # ordine non garantito
+```
+
+## Operazioni sugli insiemi:
+
+```python
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+unione = a | b
+intersezione = a & b
+differenza = a - b
+diff_simmetrica = a ^ b
+```
+
+## Caso pratico: deduplicazione “mantenendo l’ordine” (senza perdere sequenza):
+
+```python
+def dedup_preserva_ordine(items):
+    visti = set()
+    out = []
+    for x in items:
+        if x not in visti:
+            visti.add(x)
+            out.append(x)
+    return out
+
+print(dedup_preserva_ordine([1, 2, 2, 3, 1, 4]))  # [1, 2, 3, 4]
+```
+
+## Mini-guida: quale tipo scegliere?
+
+- list: ordine importante, duplicati ok, iterazioni frequenti
+- dict: mappa chiave→valore, configurazioni, oggetti, lookup rapido
+- set: unicità, confronto tra gruppi, membership check rapido
+- str: testo, parsing, formattazione
+- int/float: calcoli e misure

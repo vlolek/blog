@@ -32,12 +32,21 @@ const education = (await getAllEducation()).slice(
 )
 ---
 
-<Layout class="max-w-3xl space-y-6">
+<Layout class="relative max-w-3xl space-y-6">
   <PageHead includeOrganization={true} />
 
-  <section>
-    <h1 class="mb-4 text-3xl font-medium">
-      {SITE.title}
+  <!-- Анимированный фон с частицами -->
+  <div class="animated-bg"></div>
+
+  <section class="animate-fade-in relative z-10">
+    <!-- Анимированный градиент за заголовком -->
+    <div class="gradient-blob"></div>
+    <h1
+      class="relative mb-4 text-3xl font-medium"
+    >
+      <span class="animate-text-gradient"
+        >{SITE.title}</span
+      >
     </h1>
     {author && <AuthorCard author={author} />}
   </section>
@@ -45,7 +54,8 @@ const education = (await getAllEducation()).slice(
   {
     blog.length > 0 && (
       <section
-        class="flex flex-col gap-y-4"
+        class="animate-slide-up relative z-10 flex flex-col gap-y-4"
+        style="animation-delay: 0.1s;"
         aria-labelledby="ultimi-post-heading"
       >
         <div class="flex items-center justify-between border-b pb-2">
@@ -78,8 +88,11 @@ const education = (await getAllEducation()).slice(
           class="flex flex-col divide-y"
           aria-label="Lista degli ultimi post del blog"
         >
-          {blog.map((post) => (
-            <li>
+          {blog.map((post, index) => (
+            <li
+              class="animate-fade-in hover-card-effect"
+              style={`animation-delay: ${0.2 + index * 0.1}s;`}
+            >
               <BlogCard entry={post} />
             </li>
           ))}
@@ -91,7 +104,8 @@ const education = (await getAllEducation()).slice(
   {
     education.length > 0 && (
       <section
-        class="flex flex-col gap-y-4"
+        class="animate-slide-up relative z-10 flex flex-col gap-y-4"
+        style="animation-delay: 0.5s;"
         aria-labelledby="ultimi-articoli-formazione-heading"
       >
         <div class="flex items-center justify-between border-b pb-2">
@@ -124,8 +138,11 @@ const education = (await getAllEducation()).slice(
           class="flex flex-col divide-y"
           aria-label="Lista degli ultimi articoli di formazione"
         >
-          {education.map((article) => (
-            <li>
+          {education.map((article, index) => (
+            <li
+              class="animate-fade-in hover-card-effect"
+              style={`animation-delay: ${0.6 + index * 0.1}s;`}
+            >
               <BlogCard entry={article} />
             </li>
           ))}
@@ -137,7 +154,8 @@ const education = (await getAllEducation()).slice(
   {
     projects.length > 0 && (
       <section
-        class="flex flex-col gap-y-4"
+        class="animate-slide-up relative z-10 flex flex-col gap-y-4"
+        style="animation-delay: 0.9s;"
         aria-labelledby="ultimi-progetti-heading"
       >
         <div class="flex items-center justify-between border-b pb-2">
@@ -170,8 +188,11 @@ const education = (await getAllEducation()).slice(
           class="flex flex-col divide-y"
           aria-label="Lista degli ultimi progetti"
         >
-          {projects.map((project) => (
-            <li>
+          {projects.map((project, index) => (
+            <li
+              class="animate-fade-in hover-card-effect"
+              style={`animation-delay: ${1.0 + index * 0.1}s;`}
+            >
               <ProjectCard project={project} />
             </li>
           ))}
@@ -180,3 +201,14 @@ const education = (await getAllEducation()).slice(
     )
   }
 </Layout>
+#Simboly
+<div class="floating-symbols" aria-hidden="true">
+  <span class="symbol symbol-1">✨</span>
+  <span class="symbol symbol-2">🚀</span>
+  <span class="symbol symbol-3">💡</span>
+  <span class="symbol symbol-4">⚡</span>
+  <span class="symbol symbol-5">🎯</span>
+  <span class="symbol symbol-6">💻</span>
+  <span class="symbol symbol-7">📚</span>
+  <span class="symbol symbol-8">🎨</span>
+</div>
