@@ -35,18 +35,13 @@ const education = (await getAllEducation()).slice(
 <Layout class="relative max-w-3xl space-y-6">
   <PageHead includeOrganization={true} />
 
-  <!-- Анимированный фон с частицами -->
-  <div class="animated-bg"></div>
+  <!-- animated backgrounds removed (plain theme) -->
 
   <section class="animate-fade-in relative z-10">
-    <!-- Анимированный градиент за заголовком -->
-    <div class="gradient-blob"></div>
     <h1
       class="relative mb-4 text-3xl font-medium"
     >
-      <span class="animate-text-gradient"
-        >{SITE.title}</span
-      >
+      {SITE.title}
     </h1>
     {author && <AuthorCard author={author} />}
   </section>
@@ -201,14 +196,3 @@ const education = (await getAllEducation()).slice(
     )
   }
 </Layout>
-#Simboly
-<div class="floating-symbols" aria-hidden="true">
-  <span class="symbol symbol-1">✨</span>
-  <span class="symbol symbol-2">🚀</span>
-  <span class="symbol symbol-3">💡</span>
-  <span class="symbol symbol-4">⚡</span>
-  <span class="symbol symbol-5">🎯</span>
-  <span class="symbol symbol-6">💻</span>
-  <span class="symbol symbol-7">📚</span>
-  <span class="symbol symbol-8">🎨</span>
-</div>

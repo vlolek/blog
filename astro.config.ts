@@ -10,7 +10,6 @@ import expressiveCode from 'astro-expressive-code'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeKatex from 'rehype-katex'
 import rehypePrettyCode from 'rehype-pretty-code'
-import remarkEmoji from 'remark-emoji'
 import remarkMath from 'remark-math'
 
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections'
@@ -24,9 +23,13 @@ export default defineConfig({
   integrations: [
     expressiveCode({
       themes: ['github-light', 'github-dark'],
-      plugins: [pluginCollapsibleSections(), pluginLineNumbers()],
+      plugins: [
+        pluginCollapsibleSections(),
+        pluginLineNumbers(),
+      ],
       useDarkModeMediaQuery: false,
-      themeCssSelector: (theme) => `[data-theme="${theme.name.split('-')[1]}"]`,
+      themeCssSelector: (theme) =>
+        `[data-theme="${theme.name.split('-')[1]}"]`,
       defaultProps: {
         wrap: true,
         collapseStyle: 'collapsible-auto',
@@ -44,20 +47,27 @@ export default defineConfig({
         codeBackground:
           'color-mix(in oklab, var(--muted) 25%, transparent)',
         frames: {
-          editorActiveTabForeground: 'var(--muted-foreground)',
+          editorActiveTabForeground:
+            'var(--muted-foreground)',
           editorActiveTabBackground:
             'color-mix(in oklab, var(--muted) 25%, transparent)',
-          editorActiveTabIndicatorBottomColor: 'transparent',
-          editorActiveTabIndicatorTopColor: 'transparent',
+          editorActiveTabIndicatorBottomColor:
+            'transparent',
+          editorActiveTabIndicatorTopColor:
+            'transparent',
           editorTabBorderRadius: '0',
           editorTabBarBackground: 'transparent',
-          editorTabBarBorderBottomColor: 'transparent',
+          editorTabBarBorderBottomColor:
+            'transparent',
           frameBoxShadowCssValue: 'none',
           terminalBackground:
             'color-mix(in oklab, var(--muted) 25%, transparent)',
-          terminalTitlebarBackground: 'transparent',
-          terminalTitlebarBorderBottomColor: 'transparent',
-          terminalTitlebarForeground: 'var(--muted-foreground)',
+          terminalTitlebarBackground:
+            'transparent',
+          terminalTitlebarBorderBottomColor:
+            'transparent',
+          terminalTitlebarForeground:
+            'var(--muted-foreground)',
         },
         lineNumbers: {
           foreground: 'var(--muted-foreground)',
@@ -80,7 +90,11 @@ export default defineConfig({
   server: {
     port: 1234,
     host: true,
-    allowedHosts: ['vlolek.com', 'localhost', '0.0.0.0'],
+    allowedHosts: [
+      'vlolek.com',
+      'localhost',
+      '0.0.0.0',
+    ],
   },
   devToolbar: {
     enabled: false,
@@ -92,7 +106,11 @@ export default defineConfig({
         rehypeExternalLinks,
         {
           target: '_blank',
-          rel: ['nofollow', 'noreferrer', 'noopener'],
+          rel: [
+            'nofollow',
+            'noreferrer',
+            'noopener',
+          ],
         },
       ],
       rehypeHeadingIds,
@@ -107,6 +125,6 @@ export default defineConfig({
         },
       ],
     ],
-    remarkPlugins: [remarkMath, remarkEmoji],
+    remarkPlugins: [remarkMath],
   },
 })
