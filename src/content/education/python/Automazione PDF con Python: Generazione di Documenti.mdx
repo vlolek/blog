@@ -1,0 +1,47 @@
+---
+title: 'Automazione PDF con Python: Generazione di Documenti'
+description: 'Come utilizzare la libreria FPDF per trasformare dati grezzi in report professionali.'
+date: '2024-05-20'
+tags:
+  [
+    'python',
+    'pdf',
+    'automation',
+    'fpdf',
+    'reporting',
+  ]
+authors: ['vlolek']
+order: 5
+---
+
+# 📝 Appunti di Viaggio
+
+In questa fase ho smesso di scrivere semplici script da terminale e ho iniziato a creare strumenti che interagiscono con il mondo reale. Ecco cosa ho imparato e come l'ho applicato.
+
+---
+
+## 📄 1. Generazione Automatica di PDF
+
+In queste sezioni ho imparato a manipolare i file PDF. Non si tratta solo di scrivere testo, ma di gestire il layout, le celle e l'automazione partendo da file esterni (come i CSV).
+
+**Cosa ho imparato:**
+
+- Utilizzo della libreria `fpdf`.
+- Creazione di header e footer dinamici.
+- Iterazione su file Excel/CSV per generare fatture massive.
+
+### Esempio Pratico
+
+Ecco come genero un PDF di base con una riga di intestazione:
+
+```python
+from fpdf import FPDF
+
+pdf = FPDF(orientation="P", unit="mm", format="A4")
+pdf.add_page()
+pdf.set_font(family="Arial", style="B", size=16)
+pdf.cell(w=0, h=12, txt="Report Mensile Vendite", align="L", ln=1)
+pdf.line(10, 21, 200, 21)
+
+pdf.output("report.pdf")
+```

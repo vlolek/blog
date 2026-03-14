@@ -1,0 +1,50 @@
+---
+title: 'Newsletter Automatica: News API e SMTP'
+description: 'Creazione di un sistema che estrae notizie in tempo reale e le invia via email.'
+date: '2024-05-21'
+tags:
+  [
+    'python',
+    'news-api',
+    'smtp',
+    'automation',
+    'email',
+  ]
+authors: ['vlolek']
+order: 6
+---
+
+# News API & Email Automation
+
+Ho realizzato uno script che funge da assistente personale: ogni mattina cerca le notizie più rilevanti su un determinato argomento e me le invia direttamente nella casella di posta. Questo mi ha permesso di capire a fondo come interagire con i server web.
+
+### Cosa ho imparato:
+
+- Utilizzo della libreria `requests` per interrogare API esterne.
+- Parsing del formato JSON per estrarre titoli e URL.
+- Configurazione di `smtplib` per la sicurezza delle credenziali (App Passwords).
+
+### Esempio di codice:
+
+```python
+import requests
+import smtplib, ssl
+
+# Recupero notizie
+api_key = "IL_TUO_API_KEY"
+url = f"[https://newsapi.org/v2/everything?q=python&apiKey=](https://newsapi.org/v2/everything?q=python&apiKey=){api_key}"
+content = requests.get(url).json()
+
+body = "Subject: News del giorno\n"
+for article in content["articles"][:5]:
+    body += f"{article['title']}\n{article['url']}\n\n"
+
+# Invio email
+host = "smtp.gmail.com"
+port = 465
+context = ssl.create_default_context()
+
+with smtplib.SMTP_SSL(host, port, context=context) as server:
+    server.login("mia_email@gmail.com", "password_app")
+    server.sendmail("mia_email@gmail.com", "destinatario@gmail.com", body.encode('utf-8'))
+```

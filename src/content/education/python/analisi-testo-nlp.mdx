@@ -1,0 +1,49 @@
+---
+title: 'Analisi del Testo e NLP Base'
+description: 'Processare grandi volumi di dati testuali per estrarre informazioni chiave.'
+date: '2024-05-22'
+tags:
+  [
+    'Python',
+    'NLP',
+    'Analisi del Testo',
+    'Data Science',
+  ]
+author: 'vlolek'
+order: 7
+---
+
+# Creazione di API con Flask
+
+Siamo passati al "lato server". Ho imparato a costruire un'infrastruttura web capace di ricevere richieste e rispondere con dati strutturati. È stato il mio primo approccio serio allo sviluppo Backend.
+
+### Competenze acquisite:
+
+- Installazione e configurazione di micro-framework come `Flask`.
+- Creazione di percorsi (routes) dinamici.
+- Integrazione di database o file CSV all'interno dell'API.
+
+### Esempio di codice:
+
+```python
+from flask import Flask, jsonify
+import pandas as pd
+
+app = Flask(__name__)
+
+# Simulo un database di temperature
+df = pd.read_csv("dati_meteo.csv")
+
+@app.route("/api/v1/<citta>")
+def get_meteo(citta):
+    # Esempio di filtraggio dati
+    temp = df.loc[df['city'] == citta]['temperature'].squeeze()
+    return jsonify({
+        "city": citta,
+        "temperature": temp,
+        "unit": "Celsius"
+    })
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)
+```
