@@ -1,9 +1,14 @@
-import type { IconMap, SocialLink, Site } from '@/types'
+import type {
+  IconMap,
+  SocialLink,
+  Site,
+} from '@/types'
 
 export const SITE: Site = {
   title: 'Vladlen Oleksiuk',
   description:
-    'Backend developer e sviluppatore python.',
+    "Sviluppatore Backend Python & Appassionato di Machine Learning. Specializzato nella creazione de architetture robuste, attualmente sto approfondendo  le frontiere della Computer Vision e dell'intelligenza artificiale.",
+
   href: 'https://vlolek.com',
   author: 'Vladlen Oleksiuk',
   locale: 'it-IT',
